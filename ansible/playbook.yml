@@ -1,0 +1,10 @@
+---
+- name: Configure Jenkins EC2 Server
+  hosts: aws_ec2
+  become: true
+
+  roles:
+    - java
+    - docker
+    - trivy
+    - jenkins
