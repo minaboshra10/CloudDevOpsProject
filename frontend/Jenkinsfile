@@ -1,0 +1,8 @@
+@Library('cloud-devops-shared-library') _
+
+microservicePipeline(
+    serviceName: 'frontend',
+    serviceDir: 'frontend',
+    ecrRepository: 'cloud_devops/frontend',
+    deploymentFile: 'frontend-deployment.yaml'
+)

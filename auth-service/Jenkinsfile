@@ -1,0 +1,8 @@
+@Library('cloud-devops-shared-library') _
+
+microservicePipeline(
+    serviceName: 'auth-service',
+    serviceDir: 'auth-service',
+    ecrRepository: 'cloud_devops/auth-service',
+    deploymentFile: 'auth-deployment.yaml'
+)

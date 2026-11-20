@@ -1,0 +1,8 @@
+@Library('cloud-devops-shared-library') _
+
+microservicePipeline(
+    serviceName: 'roadmap-service',
+    serviceDir: 'roadmap-service',
+    ecrRepository: 'cloud_devops/roadmap-service',
+    deploymentFile: 'roadmap-deployment.yaml'
+)
