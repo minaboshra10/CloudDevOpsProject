@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: cloud-devops-auth-service:latest
+          image: 746491202405.dkr.ecr.us-east-1.amazonaws.com/cloud_devops/auth-service:latest
           ports:
             - containerPort: 5000
           envFrom:

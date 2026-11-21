@@ -43,6 +43,7 @@ resource "aws_instance" "jenkins" {
   subnet_id                   = var.subnet_id
   vpc_security_group_ids      = [aws_security_group.jenkins.id]
   key_name                    = aws_key_pair.jenkins.key_name
+  iam_instance_profile        = aws_iam_instance_profile.jenkins.name
   associate_public_ip_address = true
 
   root_block_device {

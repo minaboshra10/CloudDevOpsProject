@@ -22,3 +22,13 @@ output "jenkins_key_name" {
   description = "EC2 SSH key pair name"
   value       = aws_key_pair.jenkins.key_name
 }
+
+output "jenkins_iam_role_arn" {
+  description = "Jenkins EC2 IAM role ARN"
+  value       = aws_iam_role.jenkins.arn
+}
+
+output "jenkins_instance_profile_name" {
+  description = "Jenkins EC2 instance profile"
+  value       = aws_iam_instance_profile.jenkins.name
+}

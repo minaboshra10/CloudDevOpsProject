@@ -16,4 +16,3 @@ hostnames:
 compose:
   ansible_host: public_ip_address
   ansible_user: "'ubuntu'"
-  ansible_ssh_private_key_file: "lookup('env', 'HOME') + '/.ssh/clouddevops-jenkins'"

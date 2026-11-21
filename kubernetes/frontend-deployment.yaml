@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: cloud-devops-frontend:latest
+          image: 746491202405.dkr.ecr.us-east-1.amazonaws.com/cloud_devops/frontend:latest
           ports:
             - containerPort: 3000
           envFrom:

@@ -1,3 +1,4 @@
+
 module "network" {
   source = "../../modules/network"
 
@@ -24,11 +25,10 @@ module "server" {
   vpc_id       = module.network.vpc_id
   subnet_id    = module.network.public_subnet_ids[0]
 
-  key_name      = "clouddevops-jenkins"
-  public_key    = file(pathexpand("~/.ssh/clouddevops-jenkins.pub"))
-  allowed_cidr  = "41.37.228.238/32"
-  instance_type = "t3.medium"
-
+  key_name         = "clouddevops-jenkins"
+  public_key       = file(pathexpand("~/.ssh/clouddevops-jenkins.pub"))
+  allowed_cidr     = "156.209.141.238/32"
+  instance_type    = "t3.small"
   root_volume_size = 20
 }
 
@@ -38,8 +38,8 @@ module "eks" {
   project_name         = "cloud_devops"
   cluster_version      = "1.37"
   private_subnet_ids   = module.network.private_subnet_ids
-  allowed_cluster_cidr = "41.37.228.238/32"
-  node_instance_types  = ["t3.medium"]
+  allowed_cluster_cidr = "156.209.141.238/32"
+  node_instance_types  = ["t3.small"]
 }
 
 module "ecr" {

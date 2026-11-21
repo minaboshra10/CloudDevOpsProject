@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: roadmap-service
-          image: cloud-devops-roadmap-service:latest
+          image: 746491202405.dkr.ecr.us-east-1.amazonaws.com/cloud_devops/roadmap-service:latest
           ports:
             - containerPort: 8080
