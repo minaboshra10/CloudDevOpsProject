@@ -46,6 +46,7 @@ resource "aws_iam_role_policy" "jenkins_ecr_push" {
 
         Action = [
           "ecr:BatchCheckLayerAvailability",
+          "ecr:BatchGetImage",
           "ecr:CompleteLayerUpload",
           "ecr:InitiateLayerUpload",
           "ecr:PutImage",
