@@ -4,43 +4,56 @@ An end-to-end Cloud DevOps project that automates infrastructure provisioning, s
 
 ## Table of Contents
 
-- [Project Overview](#project-overview)
-- [Architecture](#architecture)
-- [Application Services](#application-services)
-- [Technology Stack](#technology-stack)
-- [Repository Structure](#repository-structure)
-- [Prerequisites](#prerequisites)
-- [Local Application Setup](#local-application-setup)
-- [AWS Infrastructure Provisioning](#aws-infrastructure-provisioning)
-- [Jenkins Server Configuration](#jenkins-server-configuration)
-- [CI/CD Pipeline](#cicd-pipeline)
-- [Kubernetes Deployment](#kubernetes-deployment)
-- [ArgoCD GitOps](#argocd-gitops)
-- [Security](#security)
-- [Verification](#verification)
-- [Important Notes](#important-notes)
+1. [Project Overview](#project-overview)
+2. [Architecture](#architecture)
+3. [Application Services](#application-services)
+4. [Technology Stack](#technology-stack)
+5. [Repository Structure](#repository-structure)
+6. [Prerequisites](#prerequisites)
+7. [Local Application Setup](#local-application-setup)
+8. [AWS Infrastructure Provisioning](#aws-infrastructure-provisioning)
+9. [Jenkins Server Configuration](#jenkins-server-configuration)
+10. [CI/CD Pipeline](#cicd-pipeline)
+11. [Kubernetes Deployment](#kubernetes-deployment)
+12. [ArgoCD GitOps](#argocd-gitops)
+13. [Security](#security)
+14. [Verification](#verification)
+15. [Important Notes](#important-notes)
+16. [Project Status](#project-status)
 
-## Project Overview
+---
 
-The project demonstrates a cloud-native deployment workflow for a microservices web application.
+## 1. Project Overview
 
-It uses Terraform to provision AWS infrastructure, Ansible to configure the Jenkins server, Jenkins to automate CI/CD, Trivy to scan Docker images, Amazon ECR to store images, and Amazon EKS to run the application.
+The project demonstrates an end-to-end cloud-native deployment workflow for a microservices web application.
 
-Kubernetes manifests are maintained in GitHub, allowing ArgoCD to synchronize the desired application state with the Kubernetes cluster.
+It uses:
 
-## Architecture
+- **Terraform** to provision AWS infrastructure.
+- **Ansible** to configure the Jenkins server.
+- **Docker** to containerize application services.
+- **Jenkins** to automate CI/CD pipelines.
+- **Trivy** to scan container images for vulnerabilities.
+- **Amazon ECR** to store container images.
+- **Amazon EKS** to run the application on Kubernetes.
+- **ArgoCD** to implement GitOps-based deployment synchronization.
 
-The project follows this workflow:
+Kubernetes manifests are maintained in GitHub. Jenkins updates the image tags after successful builds and security scans, while ArgoCD detects repository changes and synchronizes the desired state with the EKS cluster.
+
+## 2. Architecture
+
+### Architecture Workflow
 
 1. Terraform provisions the AWS network, Jenkins EC2 instance, EKS cluster, and ECR repositories.
 2. Ansible configures the Jenkins server and installs the required tools.
 3. Developers push application changes to GitHub.
 4. Jenkins checks out the source code and builds a Docker image.
-5. Trivy scans the image for vulnerabilities.
+5. Trivy scans the image for HIGH and CRITICAL vulnerabilities.
 6. Images that pass the security gate are pushed to Amazon ECR.
-7. Jenkins updates the corresponding Kubernetes deployment manifest with the new image tag and pushes the change to GitHub.
-8. ArgoCD can detect the manifest change and synchronize the application with Amazon EKS.
-9. The application is exposed through an AWS Application Load Balancer.
+7. Jenkins updates the corresponding Kubernetes Deployment manifest with the new image tag.
+8. Jenkins commits and pushes the updated manifest to GitHub.
+9. ArgoCD detects the manifest change and synchronizes the application with Amazon EKS.
+10. The application is exposed through an AWS Application Load Balancer.
 
 ### Architecture Components
 
@@ -63,37 +76,38 @@ The project follows this workflow:
 | AWS Load Balancer Controller | Provisions and manages AWS load balancers |
 | ArgoCD | GitOps-based Kubernetes synchronization |
 
-## Application Services
+## 3. Application Services
 
-The application consists of three main services and a MySQL database.
+The application consists of three microservices and a MySQL database.
 
-### 1. Frontend Service
+### 3.1 Frontend Service
 
 - Built with Node.js and Express.
 - Uses EJS for server-side rendering.
-- Handles the web interface, user sessions, and communication with backend services.
+- Handles the web interface and user sessions.
+- Communicates with the backend services.
 - Exposes port `3000`.
 
-### 2. Authentication Service
+### 3.2 Authentication Service
 
 - Built with Python and Flask.
 - Handles user authentication and registration.
 - Connects to the MySQL database.
 - Exposes port `5000`.
 
-### 3. Roadmap Service
+### 3.3 Roadmap Service
 
 - Built with Java and Maven.
 - Provides the DevOps roadmap functionality.
 - Exposes port `8080`.
 
-### 4. MySQL Database
+### 3.4 MySQL Database
 
 - Uses MySQL 8.0.
 - Stores application data.
-- Uses Kubernetes persistent storage when deployed on EKS.
+- Uses persistent Kubernetes storage when deployed on EKS.
 
-## Technology Stack
+## 4. Technology Stack
 
 | Category | Technologies |
 |---|---|
@@ -112,7 +126,7 @@ The application consists of three main services and a MySQL database.
 | Database | MySQL |
 | Version Control | Git, GitHub |
 
-## Repository Structure
+## 5. Repository Structure
 
 ```text
 CloudDevOpsProject/
@@ -184,7 +198,7 @@ CloudDevOpsProject/
 └── README.md
 ```
 
-## Prerequisites
+## 6. Prerequisites
 
 Install the following tools on the machine used to manage the project:
 
@@ -195,6 +209,7 @@ Install the following tools on the machine used to manage the project:
 - kubectl
 - Helm
 - Git
+- SSH client
 
 You also need:
 
@@ -204,38 +219,38 @@ You also need:
 - A GitHub repository containing the project.
 - A GitHub credential configured in Jenkins for repository access.
 
-## Local Application Setup
+## 7. Local Application Setup
 
 Docker Compose can be used to build and run the application locally.
 
-### 1. Clone the Repository
+### 7.1 Clone the Repository
 
 ```bash
 git clone https://github.com/minaboshra10/CloudDevOpsProject.git
 cd CloudDevOpsProject
 ```
 
-### 2. Start the Application
+### 7.2 Start the Application
 
 ```bash
 docker compose up --build -d
 ```
 
-### 3. Check Running Containers
+### 7.3 Check Running Containers
 
 ```bash
 docker compose ps
 ```
 
-### 4. Access the Frontend
+### 7.4 Access the Frontend
 
-Open:
+Open the following URL:
 
 ```text
 http://localhost:3000
 ```
 
-### 5. Stop the Application
+### 7.5 Stop the Application
 
 ```bash
 docker compose down
@@ -249,11 +264,13 @@ docker compose down -v
 
 **Warning:** Removing the volume deletes the local database data.
 
-## AWS Infrastructure Provisioning
+## 8. AWS Infrastructure Provisioning
 
 Terraform provisions the AWS infrastructure through reusable modules.
 
-### Infrastructure Resources
+### 8.1 Infrastructure Resources
+
+The infrastructure includes:
 
 - One VPC with CIDR `10.0.0.0/16`.
 - Two public subnets across two Availability Zones.
@@ -266,7 +283,7 @@ Terraform provisions the AWS infrastructure through reusable modules.
 - Three Amazon ECR repositories.
 - IAM roles and policies for Jenkins and EKS components.
 
-### Terraform Modules
+### 8.2 Terraform Modules
 
 | Module | Purpose |
 |---|---|
@@ -275,7 +292,7 @@ Terraform provisions the AWS infrastructure through reusable modules.
 | eks | EKS cluster, IAM configuration, managed node groups |
 | ecr | Container repositories for application services |
 
-### 1. Configure AWS Credentials
+### 8.3 Configure AWS Credentials
 
 Configure an AWS CLI profile:
 
@@ -289,7 +306,7 @@ Verify the configured identity:
 aws sts get-caller-identity --profile clouddevops
 ```
 
-### 2. Configure SSH Access
+### 8.4 Configure SSH Access
 
 Create an SSH key pair if one does not already exist:
 
@@ -303,7 +320,7 @@ Terraform expects the corresponding public key at:
 ~/.ssh/clouddevops-jenkins.pub
 ```
 
-### 3. Configure Allowed IP Addresses
+### 8.5 Configure Allowed IP Addresses
 
 Before provisioning, update the `allowed_cidr` and `allowed_cluster_cidr` values in:
 
@@ -313,7 +330,7 @@ terraform/environments/dev/main.tf
 
 Use the current public IP address with a `/32` CIDR for administrative access.
 
-### 4. Initialize Terraform
+### 8.6 Initialize Terraform
 
 ```bash
 cd terraform/environments/dev
@@ -321,27 +338,27 @@ cd terraform/environments/dev
 terraform init
 ```
 
-### 5. Validate Configuration
+### 8.7 Validate Configuration
 
 ```bash
 terraform validate
 ```
 
-### 6. Review the Execution Plan
+### 8.8 Review the Execution Plan
 
 ```bash
 terraform plan
 ```
 
-### 7. Provision Infrastructure
+### 8.9 Provision Infrastructure
 
 ```bash
 terraform apply
 ```
 
-Review the plan and confirm the operation before applying.
+Review the execution plan and confirm the operation before applying.
 
-### 8. View Infrastructure Outputs
+### 8.10 View Infrastructure Outputs
 
 ```bash
 terraform output
@@ -356,13 +373,13 @@ Important outputs include:
 - ECR repository URLs.
 - NAT Gateway ID.
 
-## Jenkins Server Configuration
+## 9. Jenkins Server Configuration
 
 Jenkins runs on an AWS EC2 instance.
 
 Ansible automates the installation and configuration of the required components.
 
-### Ansible Roles
+### 9.1 Ansible Roles
 
 | Role | Responsibility |
 |---|---|
@@ -371,7 +388,7 @@ Ansible automates the installation and configuration of the required components.
 | trivy | Installs the Trivy vulnerability scanner |
 | jenkins | Installs and configures Jenkins |
 
-### Run the Ansible Playbook
+### 9.2 Run the Ansible Playbook
 
 From the repository root:
 
@@ -385,7 +402,7 @@ ansible-playbook playbook.yml
 
 The playbook waits for the SSH connection and then executes the configuration roles.
 
-### Access Jenkins
+### 9.3 Access Jenkins
 
 Open the Jenkins URL using the public IP of the provisioned EC2 instance:
 
@@ -395,7 +412,7 @@ http://<JENKINS_PUBLIC_IP>:8080
 
 Complete the initial Jenkins setup and configure the required credentials and shared library.
 
-### Jenkins Credentials
+### 9.4 Jenkins Credentials
 
 Configure a GitHub credential with ID:
 
@@ -407,7 +424,7 @@ This credential is used by Jenkins to push updated Kubernetes manifests to GitHu
 
 Do not store personal access tokens, passwords, or private keys in the repository.
 
-### Shared Pipeline Library
+### 9.5 Shared Pipeline Library
 
 The reusable pipeline implementation is located at:
 
@@ -417,15 +434,19 @@ vars/microservicePipeline.groovy
 
 Configure the Jenkins Global Pipeline Library with:
 
-- Name: `cloud-devops-shared-library`
-- Repository: `https://github.com/minaboshra10/CloudDevOpsProject.git`
-- Default branch: `main`
+| Setting | Value |
+|---|---|
+| Name | cloud-devops-shared-library |
+| Repository | https://github.com/minaboshra10/CloudDevOpsProject.git |
+| Default branch | main |
 
 The three service Jenkinsfiles call the shared pipeline with service-specific configuration.
 
-## CI/CD Pipeline
+## 10. CI/CD Pipeline
 
-Each application service has its own Jenkins pipeline:
+Each application service has its own Jenkins pipeline.
+
+### 10.1 Pipeline Configuration
 
 | Service | Jenkinsfile | ECR Repository |
 |---|---|---|
@@ -433,11 +454,11 @@ Each application service has its own Jenkins pipeline:
 | Auth Service | auth-service/Jenkinsfile | cloud_devops/auth-service |
 | Roadmap Service | roadmap-service/Jenkinsfile | cloud_devops/roadmap-service |
 
-### Pipeline Stages
+### 10.2 Pipeline Stages
 
 #### 1. Build Image
 
-Jenkins builds a Docker image using the service-specific Dockerfile.
+Jenkins checks out the source code and builds a Docker image using the service-specific Dockerfile.
 
 #### 2. Scan Image
 
@@ -470,9 +491,9 @@ Jenkins updates the corresponding Kubernetes Deployment manifest with the new EC
 
 #### 6. Push Manifests
 
-Jenkins commits and pushes the updated manifest to the GitHub main branch.
+Jenkins commits and pushes the updated manifest to the GitHub `main` branch.
 
-### IAM Permissions
+### 10.3 IAM Permissions
 
 The Jenkins EC2 instance uses an IAM role and instance profile to access Amazon ECR.
 
@@ -480,11 +501,11 @@ The role includes the required authentication, repository inspection, image uplo
 
 No AWS access keys are required inside the Jenkins pipeline.
 
-## Kubernetes Deployment
+## 11. Kubernetes Deployment
 
 The application is deployed to Amazon EKS in the `ivolve` namespace.
 
-### Kubernetes Resources
+### 11.1 Kubernetes Resources
 
 | Resource | Purpose |
 |---|---|
@@ -498,7 +519,7 @@ The application is deployed to Amazon EKS in the `ivolve` namespace.
 | Services | Provide internal service communication |
 | Ingress | Exposes the frontend through an AWS ALB |
 
-### Configure kubectl
+### 11.2 Configure kubectl
 
 Update the local kubeconfig:
 
@@ -515,7 +536,7 @@ Verify cluster access:
 kubectl get nodes
 ```
 
-### Inspect Application Resources
+### 11.3 Inspect Application Resources
 
 ```bash
 kubectl get all -n ivolve
@@ -535,7 +556,7 @@ kubectl get ingress -n ivolve
 
 The AWS Load Balancer Controller provisions an internet-facing Application Load Balancer based on the Ingress resource.
 
-### Application Access
+### 11.4 Application Access
 
 Retrieve the Ingress hostname:
 
@@ -543,9 +564,9 @@ Retrieve the Ingress hostname:
 kubectl get ingress -n ivolve
 ```
 
-Open the hostname in a browser to access the frontend.
+Open the generated hostname in a browser to access the frontend.
 
-## ArgoCD GitOps
+## 12. ArgoCD GitOps
 
 The project includes an ArgoCD Application manifest:
 
@@ -563,7 +584,7 @@ The Application is configured to:
 - Enable pruning of removed resources.
 - Enable self-healing.
 
-### Apply the ArgoCD Application
+### 12.1 Apply the ArgoCD Application
 
 After ArgoCD is installed and accessible in the cluster:
 
@@ -571,7 +592,7 @@ After ArgoCD is installed and accessible in the cluster:
 kubectl apply -f argocd/application.yaml
 ```
 
-Check the Application:
+### 12.2 Check the Application
 
 ```bash
 kubectl get applications -n argocd
@@ -585,60 +606,69 @@ kubectl describe application ivolve-app -n argocd
 
 With automated synchronization enabled, changes pushed to the Kubernetes manifests in GitHub can be reconciled by ArgoCD.
 
-## Security
+## 13. Security
 
 Security is integrated into the infrastructure and CI/CD workflow.
 
 - IAM roles are used for AWS service access.
 - Jenkins uses an EC2 instance profile to access ECR.
-- EKS resources run in private subnets.
+- EKS worker nodes run in private subnets.
 - Administrative access is restricted using allowed IP CIDRs.
 - Trivy scans container images before publishing.
 - HIGH and CRITICAL vulnerability findings fail the pipeline.
 - GitHub credentials are stored in Jenkins Credentials rather than in pipeline source files.
-- Sensitive configuration should be managed separately from source code.
+- Sensitive values must not be committed to Git.
+- Kubernetes Secrets or an appropriate secrets-management solution should be used for sensitive configuration, with access restricted to authorized users and workloads.
 
-## Verification
+## 14. Verification
 
-Useful commands for checking the deployed environment:
+Use the following commands to verify the deployed environment.
 
-### Jenkins
+### 14.1 Jenkins
 
 ```bash
 sudo systemctl status jenkins
 ```
 
-### Docker
+### 14.2 Docker
 
 ```bash
 sudo systemctl status docker
 ```
 
-### EKS Nodes
+### 14.3 EKS Nodes
 
 ```bash
 kubectl get nodes
 ```
 
-### Application Pods
+### 14.4 Application Pods
 
 ```bash
 kubectl get pods -n ivolve
 ```
 
-### Services and Ingress
+### 14.5 Services and Ingress
 
 ```bash
 kubectl get svc,ingress -n ivolve
 ```
 
-### Persistent Storage
+### 14.6 Persistent Storage
 
 ```bash
 kubectl get pvc -n ivolve
 ```
 
-### ECR Repositories
+### 14.7 ArgoCD Application
+
+```bash
+kubectl get applications -n argocd
+```
+
+Confirm that the application reports `Synced` and `Healthy`.
+
+### 14.8 ECR Repositories
 
 ```bash
 aws ecr describe-repositories \
@@ -646,21 +676,44 @@ aws ecr describe-repositories \
   --profile clouddevops
 ```
 
-## Important Notes
+### 14.9 Jenkins Pipeline Results
+
+Verify that all three service pipelines complete successfully:
+
+- Frontend
+- Authentication Service
+- Roadmap Service
+
+Review the Jenkins Console Output to confirm successful image building, Trivy scanning, ECR publishing, and manifest updates.
+
+## 15. Important Notes
 
 - Update the allowed IP CIDRs before provisioning or accessing AWS resources from a different public IP.
 - Protect SSH private keys, GitHub tokens, AWS credentials, and application secrets.
-- The Docker Compose credentials are intended only for local development. Replace them with secure values for any non-local environment.
+- Docker Compose credentials are intended only for local development. Replace them with secure values for any non-local environment.
 - Review Kubernetes Secret handling before publishing the repository. Do not commit real passwords or production credentials.
 - Terraform state and plan files should not be committed to Git.
 - AWS resources such as EKS, NAT Gateway, EC2, and Application Load Balancers may incur charges while running.
 - Review AWS resource usage and costs after completing the project.
 - Do not destroy infrastructure until application and project requirements have been verified.
 
+## 16. Project Status
+
+The Cloud DevOps project implementation includes:
+
+- AWS infrastructure provisioned using Terraform.
+- Jenkins server configured using Ansible.
+- Three application services containerized with Docker.
+- Jenkins CI/CD pipelines successfully executed for Frontend, Authentication Service, and Roadmap Service.
+- Trivy vulnerability scanning integrated into all three pipelines, with HIGH and CRITICAL findings configured to fail the pipeline.
+- Docker images published to Amazon ECR.
+- Application deployed on Amazon EKS in the `ivolve` namespace.
+- ArgoCD configured to synchronize Kubernetes manifests from the GitHub repository.
+
+The three Jenkins pipelines have completed successfully. The final Kubernetes and ArgoCD deployment state should be confirmed using the verification commands in this README before submission.
+
 ---
 
-## Project Status
+**Repository:** https://github.com/minaboshra10/CloudDevOpsProject
 
-This repository contains the infrastructure, configuration management, CI/CD, containerization, Kubernetes, and GitOps configuration for the Cloud DevOps project.
-
-The actual deployment and pipeline status should be verified through Jenkins build results and the AWS/Kubernetes environment.
+**Project:** Cloud DevOps — AWS, Terraform, Ansible, Jenkins, Docker, Trivy, ECR, Kubernetes, EKS, and ArgoCD.
