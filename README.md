@@ -444,6 +444,11 @@ The three service Jenkinsfiles call the shared pipeline with service-specific co
 
 ## 10. CI/CD Pipeline
 
+### Jenkins Pipelines
+
+![Jenkins CI/CD Pipelines](docs/images/jenkins.png)
+
+
 Each application service has its own Jenkins pipeline.
 
 ### 10.1 Pipeline Configuration
@@ -567,6 +572,11 @@ kubectl get ingress -n ivolve
 Open the generated hostname in a browser to access the frontend.
 
 ## 12. ArgoCD GitOps
+
+### ArgoCD Application
+
+![ArgoCD Synced and Healthy](docs/images/argocd.png)
+
 
 The project includes an ArgoCD Application manifest:
 
